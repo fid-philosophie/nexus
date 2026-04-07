@@ -1,0 +1,20 @@
+# Environments
+.venv
+venv/
+
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+
+# Ignore VS Code settings
+.vscode/
+
+# secrets
+.env
+
+# other
+.pytest_cache/
+.mypy_cache/
+*.log
+dist/
+build/

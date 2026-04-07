@@ -1,0 +1,67 @@
+{
+    "mappingProfile": "work",
+    "mappingFields": [
+        {
+            "fieldName": "author",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P50",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P50.[0].mainsnak.datavalue.value.id"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "firstAuthor",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.firstAuthor.[0].label"
+                },
+                {
+                    "sourceName": "VIAF",
+                    "property": "creator",
+                    "fuzzyIsA": [],
+                    "pathInSource": "/*[local-name()='RDF']/*[local-name()='Concept']/*[local-name()='focus']/*[local-name()='CreativeWork']/*[local-name()='creator']/*[local-name()='Agent']/*[local-name()='label']/text()"
+                }
+            ]
+        },
+        {
+            "fieldName": "full_work_at",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P953",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P953.[0].mainsnak.datavalue.value"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 0,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "GND",
+            "sourcePriority": 40,
+            "sourcePrefix": "https://lobid.org/gnd/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "VIAF",
+            "sourcePriority": 50,
+            "sourcePrefix": "https://viaf.org/viaf/",
+            "sourceSuffix": "",
+            "sourceFormat": "xml",
+            "sourceHeaders": [
+                "Accept: application/rdf+xml"
+            ]
+        }
+    ]
+}

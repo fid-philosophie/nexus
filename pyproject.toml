@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nexus-api"
+version = "0.1.0"
+description = "FastAPI wrapper around Nexus linked-data aggregation"
+readme = ""
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.7",
+    "requests>=2.32",
+    "jsonpath-ng>=1.6",
+    "jsonschema>=4.23",
+    "lxml>=5.2",
+    "pandas>=2.2",
+    "redis>=5.0"
+]
+
+[tool.setuptools]
+py-modules = ["nexus", "nexus_api"]

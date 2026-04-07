@@ -1,0 +1,19 @@
+services:
+  nexus-api:
+    build: .
+    container_name: nexus-api
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    restart: unless-stopped

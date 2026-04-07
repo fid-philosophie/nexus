@@ -1,0 +1,81 @@
+{
+    "mappingProfile": "hub_wikidata",
+    "mappingFields": [
+        {
+            "fieldName": "Wikidata",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "QID",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        },
+        {
+            "fieldName": "GND",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P227",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "VIAF",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P214",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P214.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "LCNAF",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P244",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P244.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "FactGrid",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P8168",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P8168.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "SEP",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P3123",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P3123.[0].mainsnak.datavalue.value"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}

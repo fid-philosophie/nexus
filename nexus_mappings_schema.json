@@ -1,0 +1,92 @@
+{
+    "$id": "https://example.com/nexus-mappings.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema", 
+    "description": "A list of mappings between prioritized sources towards a Nexus object", 
+    "type": "object", 
+    "properties": {
+        "mappings": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "mappingProfile": {
+                        "type": "string"
+                    },
+                    "mappingFields": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "fieldName": {
+                                    "type": "string"
+                                },
+                                "fieldSources": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "sourceName": {
+                                                "type": "string"
+                                            },
+                                            "property": {
+                                                "type": "string"
+                                            },
+                                            "fuzzyIsA": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "pathInSource": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": ["sourceName", "property", "fuzzyIsA", "pathInSource"],
+                                        "additionalProperties": false
+                                    }
+                                }
+                            },
+                            "required": ["fieldName", "fieldSources"],
+                            "additionalProperties": false
+                        }
+                    },
+                    "mappingSources": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "sourceName": {
+                                    "type": "string"
+                                },
+                                "sourcePriority": {
+                                    "type": "integer"
+                                },
+                                "sourcePrefix": {
+                                    "type": "string"
+                                },
+                                "sourceSuffix": {
+                                    "type": "string"
+                                },
+                                "sourceFormat": {
+                                    "type": "string"
+                                },
+                                "sourceHeaders": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "required": ["sourceName", "sourcePriority", "sourcePrefix", "sourceSuffix", "sourceFormat", "sourceHeaders"],
+                            "additionalProperties": false
+                        }
+                    }
+                },
+                "required": ["mappingProfile", "mappingFields", "mappingSources"],
+                "additionalProperties": false
+            }
+        }
+    },
+    "required": ["mappings"],
+    "additionalProperties": false
+}

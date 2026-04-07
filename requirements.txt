@@ -1,0 +1,9 @@
+requests
+jsonpath_ng
+jsonschema
+lxml
+pandas
+fastapi
+pydantic
+argparse
+uvicorn

@@ -1,0 +1,158 @@
+{
+    "mappingProfile": "event",
+    "mappingFields": [
+        {
+            "fieldName": "label-en",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels.en",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.labels.en.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "instance_of",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P31",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P31.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "location",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P276",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P276.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "coordinate_location",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P625",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P625.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "country",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P17",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P17.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "point_in_time",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P585",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P585.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "started",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P580",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P580.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "ended",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P582",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P582.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "has_parts",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P527",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P527.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "follows",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P155",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P155.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "followed_by",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P156",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P156.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikidata-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "title",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}

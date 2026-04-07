@@ -1,0 +1,401 @@
+{
+    "mappingProfile": "person",
+    "mappingFields": [
+        {
+            "fieldName": "wikidata_id",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "title",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        },
+        {
+            "fieldName": "gnd_id",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P227",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "ORCiD",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P496",
+                    "fuzzyIsA": [
+                        "..."
+                    ],
+                    "pathInSource": "$.entities.*.claims.P496.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "preferred_name",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels.en",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.labels.en.value"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "preferredName",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.preferredName"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "labels.en",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.labels.en.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "birth_date",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P569",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P569.[0].mainsnak.datavalue.value.time"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "dateOfBirth",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.dateOfBirth.[0]"
+                },
+                {
+                    "sourceName": "LCNAF",
+                    "property": "http://www.loc.gov/mads/rdf/v1#birthDate",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthDate'].[0]['@value']"
+                },
+                {
+                    "sourceName": "VIAF",
+                    "property": "birthDate",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "/*[local-name()='RDF']/*[local-name()='Description']//*[local-name()='birthDate'][1]/text()"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "P77",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P77.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "birth_place",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P19",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P19.[0].mainsnak.datavalue.value.id"
+                },
+                {
+                    "sourceName": "LCNAF",
+                    "property": "http://www.loc.gov/mads/rdf/v1#birthPlace",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "placeOfBirth",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.placeOfBirth.[0].label"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "P82",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P82.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "death_date",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P570",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P570.[0].mainsnak.datavalue.value.time"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "dateOfDeath",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.dateOfDeath.[0]"
+                },
+                {
+                    "sourceName": "LCNAF",
+                    "property": "http://www.loc.gov/mads/rdf/v1#deathDate",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                },
+                {
+                    "sourceName": "VIAF",
+                    "property": "deathDate",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "/*[local-name()='RDF']/*[local-name()='Description']//*[local-name()='deathDate'][1]/text()"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "P38",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P38.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "death_place",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P20",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P20.[0].mainsnak.datavalue.value.id"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "placeOfDeath",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.placeOfDeath.[0].label"
+                },
+                {
+                    "sourceName": "LCNAF",
+                    "property": "http://www.loc.gov/mads/rdf/v1#birthPlace",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "P168",
+                    "fuzzyIsA": [
+                        "https://schema.org/Place"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P168.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "occupation",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P101",
+                    "fuzzyIsA": [
+                        "https://schema.org/Occupation"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P101.[0].mainsnak.datavalue.value.id"
+                },
+                {
+                    "sourceName": "GND",
+                    "property": "professionOrOccupation",
+                    "fuzzyIsA": [
+                        "https://schema.org/Occupation"
+                    ],
+                    "pathInSource": "$.professionOrOccupation.[0].label"
+                },
+                {
+                    "sourceName": "LCNAF",
+                    "property": "http://www.loc.gov/mads/rdf/v1#occupation",
+                    "fuzzyIsA": [
+                        "https://schema.org/Occupation"
+                    ],
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#occupation'].[0]['@value']"
+                }
+            ]
+        },
+        {
+            "fieldName": "influenced_by",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P737",
+                    "fuzzyIsA": [
+                        "..."
+                    ],
+                    "pathInSource": "$.entities.*.claims.P737.*.mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "field_of_work",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P101",
+                    "fuzzyIsA": [
+                        "..."
+                    ],
+                    "pathInSource": "$.entities.*.claims.P101.[*].mainsnak.datavalue.value.id"
+                },
+                {
+                    "sourceName": "FactGrid",
+                    "property": "P452",
+                    "fuzzyIsA": [
+                        "..."
+                    ],
+                    "pathInSource": "$.entities.*.claims.P452.[*].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "movement",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P135",
+                    "fuzzyIsA": [
+                        "..."
+                    ],
+                    "pathInSource": "$.entities.*.claims.P135.[*].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "SEP_ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P3123",
+                    "fuzzyIsA": [
+                        ""
+                    ],
+                    "pathInSource": "$.entities.*.claims.P3123.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "SEP_Preamble",
+            "fieldSources": [
+                {
+                    "sourceName": "SEP",
+                    "property": "preamble",
+                    "fuzzyIsA": [
+                        ""
+                    ],
+                    "pathInSource": "$.preamble"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 0,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "GND",
+            "sourcePriority": 70,
+            "sourcePrefix": "https://lobid.org/gnd/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "VIAF",
+            "sourcePriority": 10,
+            "sourcePrefix": "https://viaf.org/viaf/",
+            "sourceSuffix": "",
+            "sourceFormat": "xml",
+            "sourceHeaders": [
+                "Accept: application/rdf+xml"
+            ]
+        },
+        {
+            "sourceName": "LCNAF",
+            "sourcePriority": 60,
+            "sourcePrefix": "https://id.loc.gov/authorities/names/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "FactGrid",
+            "sourcePriority": 99,
+            "sourcePrefix": "https://database.factgrid.de/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        },
+        {
+            "sourceName": "SEP",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://s-xhpd.onrender.com/api/v1/entries/",
+            "sourceSuffix": "",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}

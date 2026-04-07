@@ -1,0 +1,106 @@
+{
+    "mappingProfile": "corporation",
+    "mappingFields": [
+        {
+            "fieldName": "label-en",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels.en",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.labels.en.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "official_name",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P1448",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P1448.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "short_name",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P1813",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.claims.P1813.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikidata-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "title",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        },
+        {
+            "fieldName": "GND-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P227",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "ORCiD",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P496",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P496.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "ROR-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P6782",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P6782.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "LEI",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P1278",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P1278.[0].mainsnak.datavalue.value"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}

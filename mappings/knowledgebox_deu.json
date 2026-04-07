@@ -1,0 +1,166 @@
+{
+    "mappingProfile": "knowledgebox_deu",
+    "mappingFields": [
+        {
+            "fieldName": "Geboren",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P569",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/birthDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P569.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "Gestorben",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P570",
+                    "fuzzyIsA": [
+                        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+                        "https://schema.org/deathDate",
+                        "https://schema.org/Date"
+                    ],
+                    "pathInSource": "$.entities.*.claims.P570.[0].mainsnak.datavalue.value.time"
+                }
+            ]
+        },
+        {
+            "fieldName": "Alias",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.labels.*.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Arbeitsfelder",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P101",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P101.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "Str\u00f6mungen",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P135",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P135.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "Bedeutende Werke",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P800",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P800.[0].mainsnak.datavalue.value.id"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikipedia",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "sitelinks.dewiki",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.sitelinks.dewiki.url"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikisource",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "sitelinks.dewikisource",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.sitelinks.dewikisource.url"
+                }
+            ]
+        },
+        {
+            "fieldName": "GND",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P227",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Beschreibung",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "description",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.descriptions.de.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Bildname",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "P18",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.claims.P18.[0].mainsnak.datavalue.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Name",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels.de",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.labels.de.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikidata-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "title",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}
