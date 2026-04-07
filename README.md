@@ -1,4 +1,4 @@
-# nexus_api
+# nexus
 
 Python-based Linked Open Data aggregation service wrapped with **FastAPI**.
 The service queries multiple authority sources (e.g. Wikidata, GND, VIAF, LCNAF), aggregates prioritized results, and returns structured **factlets** or flattened output.
