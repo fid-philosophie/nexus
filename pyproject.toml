@@ -13,6 +13,7 @@ dependencies = [
     "uvicorn[standard]>=0.30",
     "pydantic>=2.7",
     "requests>=2.32",
+    "certifi>=2026.10.19",
     "jsonpath-ng>=1.6",
     "jsonschema>=4.23",
     "lxml>=5.2",
