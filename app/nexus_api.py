@@ -9,6 +9,45 @@ from .config import settings # !local module!
 from .input_parser import parse_identifiers_json
 from .identifiers import validate_identifier
 
+import json
+from pathlib import Path
+from typing import Any, Self
+
+from jsonschema import ValidationError as MappingValidationError
+from jsonschema import validate
+from pydantic import ConfigDict, Field, model_validator
+
+MAPPINGS_SCHEMA_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "schema"
+    / "nexus_mappings_schema.json"
+)
+
+with MAPPINGS_SCHEMA_PATH.open("r", encoding="utf-8") as file:
+    MAPPINGS_SCHEMA = json.load(file)
+
+DEFAULT_MAPPING_FILE = (
+    Path(__file__).resolve().parent.parent
+    / "mappings"
+    / "person.json"
+)
+
+with DEFAULT_MAPPING_FILE.open("r", encoding="utf-8") as file:
+    DEFAULT_MAPPING_PROFILE = json.load(file)
+
+CUSTOM_MAPPING_EXAMPLE = {
+    "mapping_profile": DEFAULT_MAPPING_PROFILE["mappingProfile"],
+    "dict_identifiers": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+    },
+    "add_identifiers": False,
+    "flatten": True,
+    "nexus_mappings_json": {
+        "mappings": [DEFAULT_MAPPING_PROFILE],
+    },
+}
+
 contact = {
     key: value
     for key, value in {
@@ -21,112 +60,27 @@ contact = {
 app = FastAPI(
     title="Nexus API",
     version="0.9.0",
-    description="LOD aggregation",
+    description="Nexus is a linked open data aggregation tool that allows for prioritising sources and using lower prioritised soruces as fallback",
     contact=contact or None,
     docs_url="/",
     redoc_url="/redoc"
 )
 
+
 if settings.allow_origins:
-    cors_methods = ["GET"]
-
-    if settings.enable_custom_mappings:
-        cors_methods.append("POST")
-
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.allow_origins,
         allow_credentials=False,
-        allow_methods=cors_methods,
+        allow_methods=["POST"],
         allow_headers=["Content-Type"],
     )
 
-async def get_identifiers(
-    dict_identifiers: Annotated[
-        str,
-        Query(
-            description=(
-                "JSON object containing at least one resource identifier. "
-                "Keys and values must be strings."
-            ),
-            examples=['{"Wikidata":"Q9312","GND":"118559796"}'],
-        ),
-    ],
-) -> dict[str, str]:
-    try:
-        return parse_identifiers_json(dict_identifiers)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=(
-                "dict_identifiers must be a non-empty JSON object "
-                "with string values"
-            ),
-        ) from exc
-
 class In(BaseModel):
-    mapping_profile: Literal[
-        "person",
-        "work",
-        "event",
-        "place",
-        "corporation",
-        "wikidata-entity"
-    ] = Field(
-        default="person",
-        description="Profile key that selects a preset mapping strategy."
-    )
     dict_identifiers: dict[str, str] = Field(
+        default_factory=lambda: {"Wikidata": "Q352098"},
         min_length=1,
-        description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-        examples=[
-            {'Wikidata':'Q352098'},
-            {'Wikidata': 'Q9312'},
-            {'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}
-            ],
-        default_factory=lambda: {'Wikidata':'Q352098'}
-    )
-    add_identifiers: bool = Field(
-        description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-        examples=[True, False],
-        default=True
-    )
-    flatten: bool = Field(
-        description="If set true, a flattened output will be returned.",
-        examples=[False, True],
-        default=False
-    )
-
-class In_Entity(BaseModel):
-    @field_validator("dict_identifiers", mode="after")
-    @classmethod
-    def check_identifiers(
-        cls,
-        value: dict[str, str] | None,
-    ) -> dict[str, str] | None:
-
-        if value is not None:
-            for source_name, identifier in value.items():
-                validate_identifier(source_name, identifier)
-
-        return value
-    mapping_profile: Literal[
-        "corporation",
-        "event",
-        "hub_wikidata",
-        "knowledgebox_deu",
-        "person",
-        "place",
-        "project",
-        "scholarly_edition",
-        "wikidata_entity",
-        "work",
-    ] = Field(
-        default="person",
-        description="Profile key that selects a preset mapping strategy."
-    )
-    dict_identifiers: dict[str, str] = Field(
-        min_length=1,
+        validate_default=True,
         description=(
             "Dictionary of resource identifiers. "
             "If you set add_identifiers true, you can simply provide "
@@ -143,203 +97,138 @@ class In_Entity(BaseModel):
                 "VIAF": "82088490",
             },
         ],
-        default_factory=lambda: {"Wikidata": "Q352098"},
-        validate_default=True,
     )
+
     add_identifiers: bool = Field(
-        description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
+        default=True,
+        description=(
+            "If set true and a Wikidata identifier is given, "
+            "Nexus will try to fetch identifiers from other resources."
+        ),
         examples=[True, False],
-        default=True
     )
+
     flatten: bool = Field(
-        description="If set true, a flattened output will be returned.",
+        default=False,
+        description=(
+            "If set true, a flattened output will be returned."
+        ),
         examples=[False, True],
-        default=False
     )
 
-# class In_Corporation(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q2062620'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    @field_validator("dict_identifiers", mode="after")
+    @classmethod
+    def check_identifiers(
+        cls,
+        value: dict[str, str],
+    ) -> dict[str, str]:
+        for source_name, identifier in value.items():
+            validate_identifier(source_name, identifier)
 
-# class In_Event(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q3087660'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+        return value
 
-# class In_Hub_Wikidata(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q9312'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
 
-# class In_Knowledgebox_Deu(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q9312'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+class In_Entity(In):
+    mapping_profile: Literal[
+        "corporation",
+        "event",
+        "hub_wikidata",
+        "knowledgebox_deu",
+        "person",
+        "place",
+        "project",
+        "scholarly_edition",
+        "wikidata_entity",
+        "work",
+    ] = Field(
+        default="person",
+        description="Profile key that selects a preset mapping strategy.",
+    )
 
-# class In_Person(BaseModel):
-#     dict_identifiers: dict[str, str] = Field(
-#         min_length=1,
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=[
-#             {'Wikidata':'Q352098'},
-#             {'Wikidata': 'Q9312'},
-#             {'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}
-#             ],
-#         default_factory=lambda: {'Wikidata':'Q352098'}
-#     )
+class In_CustomMapping(In):
+    model_config = ConfigDict(
+        validate_default=True,
+        json_schema_extra={
+            "examples": [CUSTOM_MAPPING_EXAMPLE],
+        },
+    )
 
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    mapping_profile: str = Field(
+        default=CUSTOM_MAPPING_EXAMPLE["mapping_profile"],
+        min_length=1,
+        pattern=r"^[A-Za-z0-9_-]+$",
+        description="Name of the profile contained in the custom mapping.",
+    )
 
-# class In_Place(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q4120832'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    dict_identifiers: dict[str, str] = Field(
+        default=CUSTOM_MAPPING_EXAMPLE["dict_identifiers"],
+        min_length=1,
+        description=(
+            "Dictionary of resource identifiers. "
+            "If add_identifiers is true, additional identifiers "
+            "can be retrieved using the Wikidata identifier."
+        ),
+    )
 
-# class In_Project(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q1225026'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    add_identifiers: bool = Field(
+        default=CUSTOM_MAPPING_EXAMPLE["add_identifiers"],
+        description=(
+            "If true and a Wikidata identifier is given, "
+            "try to retrieve identifiers for additional sources."
+        ),
+    )
 
-# class In_Wikidata_Entity(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q9312'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    flatten: bool = Field(
+        default=CUSTOM_MAPPING_EXAMPLE["flatten"],
+        description=(
+            "If true, return field values without provenance metadata."
+        ),
+    )
 
-# class In_Work(BaseModel):
-#     dict_identifiers: str = Field(
-#         description="Dictionary of resource identifiers. If you set add_identifiers true, you can simply provide the Wikidata identifier and Nexus will try to fetch available identifiers from other sources.",
-#         examples=["{'Wikidata':'Q352098'}","{'Wikidata': 'Q9312'}","{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}"],
-#         default={'Wikidata':'Q139893710'}
-#     )
-#     add_identifiers: bool = Field(
-#         description="If set true (and given a Wikidata identifier), Nexus will try to fetch identifiers from other resources.",
-#         examples=[True, False],
-#         default=True
-#     )
-#     flatten: bool = Field(
-#         description="If set true, a flattened output will be returned.",
-#         examples=[False, True],
-#         default=False
-#     )
+    nexus_mappings_json: dict[str, Any] = Field(
+        default=CUSTOM_MAPPING_EXAMPLE["nexus_mappings_json"],
+        description=(
+            "Complete Nexus mapping document containing a mappings array."
+        ),
+    )
+
+    @model_validator(mode="after")
+    def check_custom_mapping(self) -> Self:
+        try:
+            validate(
+                instance=self.nexus_mappings_json,
+                schema=MAPPINGS_SCHEMA,
+            )
+        except MappingValidationError as exc:
+            raise ValueError(
+                f"Invalid custom mapping at {exc.json_path}: {exc.message}"
+            ) from exc
+
+        matching_profiles = sum(
+            profile["mappingProfile"] == self.mapping_profile
+            for profile in self.nexus_mappings_json["mappings"]
+        )
+
+        if matching_profiles != 1:
+            raise ValueError(
+                "mapping_profile must identify exactly one profile "
+                "in nexus_mappings_json"
+            )
+
+        return self
 
 if settings.enable_custom_mappings: # should only be enabled in safe environments (e.g. running the API locally)
     @app.post("/custom_mapping")
-    async def nexus_custom_mapping(inp: In):
+    async def nexus_custom_mapping(inp: In_CustomMapping):
         result = await run_in_threadpool(
             nexus.run_nexus,
             inp.mapping_profile,
             inp.dict_identifiers,
             inp.add_identifiers,
             inp.flatten,
-            "default"
+            inp.nexus_mappings_json,
         )
         return {"result": result}
-
-# @app.get("/entity")
-# async def nexus_entity(inp: In_Entity = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         inp.mapping_profile,
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
 
 @app.post("/entity")
 async def nexus_entity(inp: In_Entity):
@@ -352,129 +241,3 @@ async def nexus_entity(inp: In_Entity):
         "default",
     )
     return {"result": result}
-
-# @app.get("/corporation")
-# async def nexus_corporation(inp: In_Corporation = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "corporation",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/event")
-# async def nexus_event(inp: In_Event = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "event",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/hub_wikidata")
-# async def nexus_hub_wikidata(inp: In_Hub_Wikidata = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "hub_wikidata",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/knowledgebox_deu")
-# async def nexus_knowledgebox_deu(inp: In_Knowledgebox_Deu = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "knowledgebox_deu",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# # @app.get("/person")
-# # async def nexus_person(inp: In_Person = Depends()):
-# #     result = await run_in_threadpool(
-# #         nexus.run_nexus,
-# #         "person",
-# #         inp.dict_identifiers,
-# #         inp.add_identifiers,
-# #         inp.flatten,
-# #         "default"
-# #     )
-# #     return {"result": result}
-
-
-# @app.get("/person")
-# async def nexus_person(
-#     identifiers: Annotated[dict[str, str], Depends(get_identifiers)],
-#     add_identifiers: bool = True,
-#     flatten: bool = False,
-# ):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "person",
-#         identifiers,
-#         add_identifiers,
-#         flatten,
-#         "default",
-#     )
-
-#     return {"result": result}
-
-# @app.get("/place")
-# async def nexus_place(inp: In_Place = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "place",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/project")
-# async def nexus_project(inp: In_Project = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "project",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/wikidata_entity")
-# async def nexus_wikidata_entity(inp: In_Wikidata_Entity = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "wikidata_entity",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
-
-# @app.get("/work")
-# async def nexus_work(inp: In_Work = Depends()):
-#     result = await run_in_threadpool(
-#         nexus.run_nexus,
-#         "work",
-#         inp.dict_identifiers,
-#         inp.add_identifiers,
-#         inp.flatten,
-#         "default"
-#     )
-#     return {"result": result}
