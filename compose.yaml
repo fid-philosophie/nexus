@@ -1,19 +1,19 @@
 services:
   nexus-api:
     build: .
-    container_name: nexus-api
+
     ports:
       - "${APP_PORT:-8000}:8000"
-    environment:
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-    depends_on:
-      - redis
-    restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: nexus-redis
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
+    environment:
+      ALLOW_ORIGINS: "${ALLOW_ORIGINS:-[]}"
+      ENABLE_CUSTOM_MAPPINGS: "${ENABLE_CUSTOM_MAPPINGS:-False}"
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379/0}"
+
+      API_CONTACT_NAME: "${API_CONTACT_NAME:-}"
+      API_CONTACT_EMAIL: "${API_CONTACT_EMAIL:-}"
+      HTTP_USER_AGENT: "${HTTP_USER_AGENT:-NexusAPI/1.0}"
+
+      UVICORN_ROOT_PATH: "${APP_ROOT_PATH:-}"
+
     restart: unless-stopped

@@ -12,14 +12,14 @@ dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "pydantic>=2.7",
+    "pydantic-settings>=2",
     "requests>=2.32",
     "certifi>=2026.10.19",
     "jsonpath-ng>=1.6",
     "jsonschema>=4.23",
     "lxml>=5.2",
-    "pandas>=2.2",
     "redis>=5.0"
 ]
 
 [tool.setuptools]
-py-modules = ["nexus", "nexus_api"]
+py-modules = ["app"]

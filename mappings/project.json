@@ -1,0 +1,38 @@
+{
+    "mappingProfile": "project",
+    "mappingFields": [
+        {
+            "fieldName": "label-en",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "labels.en",
+                    "fuzzyIsA": [
+                    ],
+                    "pathInSource": "$.entities.*.labels.en.value"
+                }
+            ]
+        },
+        {
+            "fieldName": "Wikidata-ID",
+            "fieldSources": [
+                {
+                    "sourceName": "Wikidata",
+                    "property": "title",
+                    "fuzzyIsA": [],
+                    "pathInSource": "$.entities.*.title"
+                }
+            ]
+        }
+    ],
+    "mappingSources": [
+        {
+            "sourceName": "Wikidata",
+            "sourcePriority": 100,
+            "sourcePrefix": "https://www.wikidata.org/wiki/Special:EntityData/",
+            "sourceSuffix": ".json",
+            "sourceFormat": "json",
+            "sourceHeaders": []
+        }
+    ]
+}

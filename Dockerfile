@@ -17,15 +17,14 @@ RUN python -m pip install --no-cache-dir \
     "pip>=26.2.2"
 
 COPY pyproject.toml /app/
-COPY nexus.py /app/
-COPY nexus_api.py /app/
+COPY app /app/app
+COPY schema /app/schema
+COPY mappings /app/mappings
 
 RUN python -m pip install --no-cache-dir .
 
 RUN python -m pip check
 
-COPY . /app/
-
 EXPOSE 8000
 
-CMD ["python", "-m", "uvicorn", "nexus_api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "app.nexus_api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,5 +1,5 @@
 {
-    "mappingProfile": "wikidata-entity",
+    "mappingProfile": "wikidata_entity",
     "mappingFields": [
         {
             "fieldName": "label-en",

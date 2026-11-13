@@ -1,30 +1,31 @@
 """ module manages querying/requesting LOD sources and factlet creation """
 
-import json
-import requests
-from jsonpath_ng import jsonpath
-from jsonpath_ng.ext import parse
-import time
-from jsonschema import validate, ValidationError
-from lxml import etree
-import re
-import pandas
-import concurrent.futures
 import argparse
-import os
-
-#import nexus_cache #!local module!
-
+import concurrent.futures
+from datetime import UTC, datetime
 import hashlib
+import json
+import os
+import re
+
 import redis
 import requests
+from jsonpath_ng.ext import parse
+from jsonschema import ValidationError, validate
+from lxml import etree
 
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
-REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+from .config import settings
+from .identifiers import validate_identifier
 
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0) # redis client
+SCHEMA_FILE = "schema/nexus_mappings_schema.json" # default schema
 
-print("Redis ping:", r.ping()) # crash immediately if Redis unavailable
+r = redis.Redis.from_url(
+    settings.redis_url,
+    socket_connect_timeout=3,
+    socket_timeout=3,
+)
+
+r.ping()
 
 class Factlet:
     """ content + context """
@@ -203,7 +204,7 @@ class Nexus:
                         new_factlet.set_name(field_object['fieldName'])
                         new_factlet.set_description('...')
                         new_factlet.set_value(field_value)
-                        new_factlet.set_timestamp(time.time())
+                        new_factlet.set_timestamp(datetime.now(UTC).isoformat(timespec="milliseconds"))
                         new_factlet.set_fuzzy_isA(found['fuzzyIsA'])
                         new_factlet.set_subject(self._identifiers)
                         new_factlet.set_source_uri(self._source_prefixes[source_ranking[current_source]] + self._identifiers[found['sourceName']] + self._source_suffixes[source_ranking[current_source]])
@@ -338,7 +339,11 @@ class Nexus:
         default_headers = {
             "User-Agent": "NexusAPI/1.0 (https://philportal.de/philfinder; nils.geissler@uni-koeln.de)"
         }
-       
+
+        # check identifiers:
+        validate_identifier(source_name, source_item_id)
+
+       # resolve paths:
         source_prefix = self.resolve_jsonpath('$.*[?(@.mappingProfile == "' + self._mapping_profile +'")].mappingSources[?(@.sourceName == "' + source_name +'")].sourcePrefix', self._mappings)
         source_suffix = self.resolve_jsonpath('$.*[?(@.mappingProfile == "' + self._mapping_profile +'")].mappingSources[?(@.sourceName == "' + source_name +'")].sourceSuffix', self._mappings)
         source_format = self.resolve_jsonpath('$.*[?(@.mappingProfile == "' + self._mapping_profile +'")].mappingSources[?(@.sourceName == "' + source_name +'")].sourceFormat', self._mappings)
@@ -482,19 +487,19 @@ def load_mappings(nexus_mappings_json: str):
 
 def wikidata_to_authorities(dict_identifiers):
     """ should be triggered if only Wikidata identifier was given => try to get data from all available sources"""
-    with open('nexus_mappings_schema.json', 'r', encoding='utf-8') as file:
+    with open(SCHEMA_FILE, 'r', encoding='utf-8') as file:
         nexus_mappings_schema_json = json.load(file)
     nexus_mappings_json = generate_nexus_mappings_json()
     interim_nexus = Nexus()
     interim_aggregation = interim_nexus.get_aggregation_flat(nexus_mappings_json, nexus_mappings_schema_json, "hub_wikidata", dict_identifiers)
     return interim_aggregation
 
-def run_nexus(given_mapping_profile, given_dict_identifiers, given_add_identifiers, given_flatten, given_nexus_mappings_json: str = "default"):
+def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str], given_add_identifiers: bool, given_flatten: bool, given_nexus_mappings_json: str = "default"):
     """ encapsulated 'main' """
-    dict_identifiers = json.loads(given_dict_identifiers.replace("'", '"'))
+    dict_identifiers = given_dict_identifiers.copy()
     # if more_ids flag is true and a Wikidata identifier was given, try to get identifiers for other sources
     # warning: this will overwrite any other identifer than Wikidata!
-    if given_add_identifiers == True:
+    if dict_identifiers == True:
         if "Wikidata" in dict_identifiers:
             print("fetching additional identifiers via wikidata_to_authorities...")
             all_identifiers = wikidata_to_authorities({"Wikidata": dict_identifiers["Wikidata"]})
@@ -507,7 +512,7 @@ def run_nexus(given_mapping_profile, given_dict_identifiers, given_add_identifie
         all_identifiers = dict_identifiers
 
     my_nexus = Nexus()
-    with open('nexus_mappings_schema.json', 'r', encoding='utf-8') as file:
+    with open(SCHEMA_FILE, 'r', encoding='utf-8') as file:
         nexus_mappings_schema_json = json.load(file)
     if given_nexus_mappings_json == "default":
         nexus_mappings_json = generate_nexus_mappings_json()
