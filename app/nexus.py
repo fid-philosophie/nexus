@@ -160,6 +160,14 @@ class Nexus:
     def data_fallback(self, field_object, source_ranking, current_source = 0):
         """ recursive iteration through source_ranking returns available field of highest priority """
         if current_source < len(source_ranking):
+            source_name = source_ranking[current_source]
+
+            if source_name not in self._identifiers:
+                return self.data_fallback(
+                    field_object,
+                    source_ranking,
+                    current_source + 1,
+                )
             try:
                 found = None
                 for s in field_object['fieldSources']:
