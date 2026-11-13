@@ -47,17 +47,6 @@ class Factlet:
         _source_date = None         # date of lastRevision or similar
         _source_path = None         # path in source to given data (XPATH/JSONPath/...)
         _source_licence = None      # licence for the data declared by the source
-    
-    # def __init__(self, value, timestamp, fuzzy_isA, subject, source, source_property, source_date, source_path, source_licence):
-    #     self._value = value
-    #     self._timestamp = timestamp
-    #     self._fuzzy_isA = fuzzy_isA
-    #     self._subject = subject
-    #     self._source = source
-    #     self._source_property = source_property
-    #     self._source_date = source_date
-    #     self._source_path = source_path
-    #     self._source_licence = source_licence
 
     def set_name(self, name):
         self._name = name
@@ -394,7 +383,6 @@ class Nexus:
     def get_aggregation_json(self, mappings_json, mappings_schema_json, mapping_profile, dict_identifiers):
         """ return a JSON version of get_aggregate """
         aggregated_fields = self.get_aggregation(mappings_json, mappings_schema_json, mapping_profile, dict_identifiers)
-        #aggregation_json = json.dumps(aggregated_fields)
         aggregation_json = aggregated_fields
         return aggregation_json
 
@@ -498,7 +486,7 @@ def wikidata_to_authorities(dict_identifiers):
     interim_aggregation = interim_nexus.get_aggregation_flat(nexus_mappings_json, nexus_mappings_schema_json, "hub_wikidata", dict_identifiers)
     return interim_aggregation
 
-def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str], given_add_identifiers: bool, given_flatten: bool, given_nexus_mappings_json: str = "default"):
+def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str], given_add_identifiers: bool, given_flatten: bool, given_nexus_mappings_json: dict | str = "default"):
     """ encapsulated 'main' """
     dict_identifiers = given_dict_identifiers.copy()
     # if more_ids flag is true and a Wikidata identifier was given, try to get identifiers for other sources
@@ -518,14 +506,7 @@ def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str]
     my_nexus = Nexus()
     with open(SCHEMA_FILE, 'r', encoding='utf-8') as file:
         nexus_mappings_schema_json = json.load(file)
-    if given_nexus_mappings_json == "default":
-        nexus_mappings_json = generate_nexus_mappings_json()
-    else:
-        with open(given_nexus_mappings_json, 'r', encoding='utf-8') as file:
-            print("opened " + given_nexus_mappings_json + "...")
-            nexus_mappings_json = json.load(file)
-
-
+    nexus_mappings_json = load_mappings(given_nexus_mappings_json)
 
     if given_flatten == True:
         my_nexus_aggregation_json = my_nexus.get_aggregation_flat(nexus_mappings_json, nexus_mappings_schema_json, given_mapping_profile, all_identifiers)
