@@ -475,15 +475,19 @@ def fetch_with_cache(url: str, merged_headers: dict, ttl_seconds: int = 3600) ->
     # Return a SimpleResponse for consistent interface
     return SimpleResponse(env["status"], env["text"], env["headers"], env["url"])
 
-def load_mappings(nexus_mappings_json: str):
+def load_mappings(nexus_mappings_json: dict | str):
     """  check if a custom mapping was given or the default mappings should be used """
+
+    if isinstance(nexus_mappings_json, dict):
+        return nexus_mappings_json
+
     if nexus_mappings_json == "default":
         # Load from the default files
         return generate_nexus_mappings_json()
-    else:
-        with open(nexus_mappings_json, 'r', encoding='utf-8') as file:
-            print("opened " + nexus_mappings_json + "...")
-            return json.load(file)
+    
+    with open(nexus_mappings_json, 'r', encoding='utf-8') as file:
+        print("opened " + nexus_mappings_json + "...")
+        return json.load(file)
 
 def wikidata_to_authorities(dict_identifiers):
     """ should be triggered if only Wikidata identifier was given => try to get data from all available sources"""
