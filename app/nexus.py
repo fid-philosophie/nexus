@@ -16,6 +16,7 @@ from lxml import etree
 
 from .config import settings
 from .identifiers import validate_identifier
+from .input_parser import parse_identifiers_json
 
 SCHEMA_FILE = "schema/nexus_mappings_schema.json" # default schema
 
@@ -325,8 +326,11 @@ class Nexus:
         """ make HTTP request for the nexus entity, store response in self._sources[] """
 
         # default User-Agent header (change accordingly):
+        # default_headers = {
+        #     "User-Agent": "NexusAPI/1.0 (https://philportal.de/philfinder; nils.geissler@uni-koeln.de)"
+        # }
         default_headers = {
-            "User-Agent": "NexusAPI/1.0 (https://philportal.de/philfinder; nils.geissler@uni-koeln.de)"
+            "User-Agent": settings.http_user_agent
         }
 
         # check identifiers:
@@ -491,7 +495,7 @@ def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str]
     dict_identifiers = given_dict_identifiers.copy()
     # if more_ids flag is true and a Wikidata identifier was given, try to get identifiers for other sources
     # warning: this will overwrite any other identifer than Wikidata!
-    if dict_identifiers == True:
+    if given_add_identifiers:
         if "Wikidata" in dict_identifiers:
             print("fetching additional identifiers via wikidata_to_authorities...")
             all_identifiers = wikidata_to_authorities({"Wikidata": dict_identifiers["Wikidata"]})
@@ -518,7 +522,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("nexus_mappings_json", type=str, help="a mapping that conforms to the schema defined in nexus_mappings_schema.json, use 'default'", default="default")
     p.add_argument("mapping_profile", type=str, help="one of the profiles provided in your nexus_mappings_json, 'default' mapping contains profiles 'person' and 'work'")
-    p.add_argument("dict_identifiers", type=str, help="a (stringified) dictionary of identifiers (e.g. {'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'} for Immanuel Kant)")
+    p.add_argument("dict_identifiers", type=parse_identifiers_json, help=('JSON object containing resource identifiers, e.g. {"Wikidata":"Q9312","GND":"118559796"}'))
     p.add_argument("add_identifiers", type=bool, help="", default=True)
     p.add_argument("flatten", type=bool, help="", default=True)
     args = p.parse_args()
