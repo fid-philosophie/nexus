@@ -1,5 +1,5 @@
 # api.py
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field, field_validator
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
@@ -101,6 +101,8 @@ app = FastAPI(
     docs_url="/",
     redoc_url="/redoc"
 )
+
+api_router = APIRouter()
 
 
 if settings.allow_origins:
@@ -260,7 +262,7 @@ class In_CustomMapping(In):
         return self
 
 if settings.enable_custom_mappings: # should only be enabled in safe environments (e.g. running the API locally)
-    @app.post("/custom_mapping")
+    @api_router.post("/custom_mapping", operation_id="custom_mapping_v1")
     async def nexus_custom_mapping(inp: In_CustomMapping):
         result = await run_in_threadpool(
             nexus.run_nexus,
@@ -272,7 +274,7 @@ if settings.enable_custom_mappings: # should only be enabled in safe environment
         )
         return {"result": result}
 
-@app.post("/entity")
+@api_router.post("/entity", operation_id="entity_v1")
 async def nexus_entity(inp: In_Entity):
     result = await run_in_threadpool(
         nexus.run_nexus,
@@ -283,3 +285,5 @@ async def nexus_entity(inp: In_Entity):
         DEFAULT_MAPPINGS,
     )
     return {"result": result}
+
+app.include_router(api_router, prefix="/v1")
