@@ -341,7 +341,7 @@
                     "fuzzyIsA": [
                         ""
                     ],
-                    "pathInSource": "$.preamble"
+                    "pathInSource": "normalize-space(string(//*[@id='preamble']))"
                 }
             ]
         }
@@ -392,9 +392,9 @@
         {
             "sourceName": "SEP",
             "sourcePriority": 100,
-            "sourcePrefix": "https://s-xhpd.onrender.com/api/v1/entries/",
+            "sourcePrefix": "https://plato.stanford.edu/entries/",
             "sourceSuffix": "",
-            "sourceFormat": "json",
+            "sourceFormat": "html",
             "sourceHeaders": []
         }
     ]
