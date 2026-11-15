@@ -193,6 +193,12 @@ class Nexus:
                             else:
                                 print(source_ranking[current_source] + ' without request response')
                                 """ placeholder """
+                        case 'html':
+                            if source_ranking[current_source] in self._request_response:
+                                field_value = self.resolve_xpath(found['pathInSource'],self._request_response[source_ranking[current_source]]['response'],False)
+                            else:
+                                print(source_ranking[current_source] + ' without request response')
+                                """ placeholder """
                         case _:
                             print('trying to resolve a path of a format (' + self._source_formats[source_ranking[current_source]] +') that is not supported')
 
@@ -368,6 +374,8 @@ class Nexus:
                     cleaned_text = response_text.replace('\n', '') # NOTE: might be only for VIAF...
                     cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip() # NOTE: might be only for VIAF...
                     self._request_response[source_name] = {'response': etree.fromstring(cleaned_text), 'format': source_format}
+                case 'html':
+                    self._request_response[source_name] = {'response': etree.HTML(request_response.text), 'format': source_format}
                 case _:
                     print('trying to convert a request response with a format (' + self._source_formats[source_name] +') that is not supported')
         else:
