@@ -26,15 +26,47 @@ MAPPINGS_SCHEMA_PATH = (
 with MAPPINGS_SCHEMA_PATH.open("r", encoding="utf-8") as file:
     MAPPINGS_SCHEMA = json.load(file)
 
-DEFAULT_MAPPING_FILE = (
+# load default mappings/profiles from mappings folder:
+MAPPINGS_DIR = (
     Path(__file__).resolve().parent.parent
     / "mappings"
-    / "person.json"
 )
 
-with DEFAULT_MAPPING_FILE.open("r", encoding="utf-8") as file:
-    DEFAULT_MAPPING_PROFILE = json.load(file)
+DEFAULT_MAPPINGS = nexus.generate_nexus_mappings_json(
+    str(MAPPINGS_DIR)
+)
 
+# Check the loaded mapping document against the existing schema.
+validate(
+    instance=DEFAULT_MAPPINGS,
+    schema=MAPPINGS_SCHEMA,
+)
+
+# Index the mappings by their actual profile names.
+MAPPINGS_BY_PROFILE: dict[str, dict[str, Any]] = {}
+
+for profile in DEFAULT_MAPPINGS["mappings"]:
+    profile_name = profile["mappingProfile"]
+
+    if profile_name in MAPPINGS_BY_PROFILE:
+        raise RuntimeError(
+            f"Duplicate mapping profile: {profile_name!r}"
+        )
+
+    MAPPINGS_BY_PROFILE[profile_name] = profile
+
+PROFILE_NAMES = sorted(MAPPINGS_BY_PROFILE)
+
+DEFAULT_PROFILE_NAME = "person"
+
+if DEFAULT_PROFILE_NAME not in MAPPINGS_BY_PROFILE:
+    raise RuntimeError(
+        f"Default mapping profile {DEFAULT_PROFILE_NAME!r} not found."
+    )
+
+DEFAULT_MAPPING_PROFILE = MAPPINGS_BY_PROFILE[DEFAULT_PROFILE_NAME]
+
+# example data for custom mapping:
 CUSTOM_MAPPING_EXAMPLE = {
     "mapping_profile": DEFAULT_MAPPING_PROFILE["mappingProfile"],
     "dict_identifiers": {
@@ -60,7 +92,11 @@ contact = {
 app = FastAPI(
     title="Nexus API",
     version="0.9.0",
-    description="Nexus is a linked open data aggregation tool that allows for prioritising sources and using lower prioritised soruces as fallback",
+    description=(
+    "Nexus aggregates linked open data using configurable source priorities "
+    "and falls back to sources with a lower priority when a field value "
+    "is unavailable."
+    ),
     contact=contact or None,
     docs_url="/",
     redoc_url="/redoc"
@@ -129,21 +165,27 @@ class In(BaseModel):
 
 
 class In_Entity(In):
-    mapping_profile: Literal[
-        "corporation",
-        "event",
-        "hub_wikidata",
-        "knowledgebox_deu",
-        "person",
-        "place",
-        "project",
-        "scholarly_edition",
-        "wikidata_entity",
-        "work",
-    ] = Field(
-        default="person",
-        description="Profile key that selects a preset mapping strategy.",
+    mapping_profile: str = Field(
+        default=DEFAULT_PROFILE_NAME,
+        validate_default=True,
+        description=(
+            "Profile key that selects a preset mapping strategy."
+        ),
+        json_schema_extra={
+            "enum": PROFILE_NAMES,
+        },
     )
+
+    @field_validator("mapping_profile", mode="after")
+    @classmethod
+    def check_mapping_profile(cls, value: str) -> str:
+        if value not in MAPPINGS_BY_PROFILE:
+            raise ValueError(
+                "Unknown mapping profile. Choose one of: "
+                + ", ".join(PROFILE_NAMES)
+            )
+
+        return value
 
 class In_CustomMapping(In):
     model_config = ConfigDict(
@@ -238,6 +280,6 @@ async def nexus_entity(inp: In_Entity):
         inp.dict_identifiers,
         inp.add_identifiers,
         inp.flatten,
-        "default",
+        DEFAULT_MAPPINGS,
     )
     return {"result": result}
