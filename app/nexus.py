@@ -509,15 +509,13 @@ def wikidata_to_authorities(dict_identifiers):
 def run_nexus(given_mapping_profile: str, given_dict_identifiers: dict[str, str], given_add_identifiers: bool, given_flatten: bool, given_nexus_mappings_json: dict | str = "default"):
     """ encapsulated 'main' """
     dict_identifiers = given_dict_identifiers.copy()
-    # if more_ids flag is true and a Wikidata identifier was given, try to get identifiers for other sources
-    # warning: this will overwrite any other identifer than Wikidata!
+    # if add_identifiers flag is true and a Wikidata identifier was given, try to get identifiers for other sources
     if given_add_identifiers:
         if "Wikidata" in dict_identifiers:
             print("fetching additional identifiers via wikidata_to_authorities...")
-            all_identifiers = wikidata_to_authorities({"Wikidata": dict_identifiers["Wikidata"]})
-            # output values come nested in an array => flatten it to conform the input format:
-            all_identifiers = {k: v[0] if isinstance(v, list) and len(v) == 1 else v
-                        for k, v in all_identifiers.items()}
+            fetched_identifiers = wikidata_to_authorities({"Wikidata": dict_identifiers["Wikidata"]})
+            fetched_identifiers = {k: v[0] if isinstance(v, list) and len(v) == 1 else v for k, v in fetched_identifiers.items()} # output values come nested in an array => flatten it to conform the input format
+            all_identifiers = {**fetched_identifiers, **dict_identifiers} # conserve given identifiers over fetched ones
         else:
             all_identifiers = dict_identifiers
     else:
