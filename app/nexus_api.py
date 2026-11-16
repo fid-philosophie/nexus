@@ -143,7 +143,7 @@ class In(BaseModel):
             "If set true and a Wikidata identifier is given, "
             "Nexus will try to fetch identifiers from other resources."
         ),
-        examples=[True, False],
+        examples=[False, True],
     )
 
     flatten: bool = Field(
