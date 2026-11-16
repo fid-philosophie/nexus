@@ -19,7 +19,7 @@
                     "sourceName": "Wikidata",
                     "property": "P227",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P227[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -32,7 +32,7 @@
                     "fuzzyIsA": [
                         "..."
                     ],
-                    "pathInSource": "$.entities.*.claims.P496.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P496[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -70,7 +70,7 @@
                         "https://schema.org/birthDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P569.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P569[0].mainsnak.datavalue.value.time"
                 },
                 {
                     "sourceName": "GND",
@@ -80,7 +80,7 @@
                         "https://schema.org/birthDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.dateOfBirth.[0]"
+                    "pathInSource": "$.dateOfBirth[0]"
                 },
                 {
                     "sourceName": "LCNAF",
@@ -90,7 +90,7 @@
                         "https://schema.org/birthDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthDate'].[0]['@value']"
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthDate'][0]['@value']"
                 },
                 {
                     "sourceName": "VIAF",
@@ -110,7 +110,7 @@
                         "https://schema.org/birthDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P77.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P77[0].mainsnak.datavalue.value.time"
                 }
             ]
         },
@@ -123,7 +123,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.entities.*.claims.P19.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P19[0].mainsnak.datavalue.value.id"
                 },
                 {
                     "sourceName": "LCNAF",
@@ -131,7 +131,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'][0]['@value']"
                 },
                 {
                     "sourceName": "GND",
@@ -139,7 +139,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.placeOfBirth.[0].label"
+                    "pathInSource": "$.placeOfBirth[0].label"
                 },
                 {
                     "sourceName": "FactGrid",
@@ -147,7 +147,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.entities.*.claims.P82.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P82[0].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -162,7 +162,7 @@
                         "https://schema.org/deathDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P570.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P570[0].mainsnak.datavalue.value.time"
                 },
                 {
                     "sourceName": "GND",
@@ -172,7 +172,7 @@
                         "https://schema.org/deathDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.dateOfDeath.[0]"
+                    "pathInSource": "$.dateOfDeath[0]"
                 },
                 {
                     "sourceName": "LCNAF",
@@ -182,7 +182,7 @@
                         "https://schema.org/deathDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'][0]['@value']"
                 },
                 {
                     "sourceName": "VIAF",
@@ -202,7 +202,7 @@
                         "https://schema.org/deathDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P38.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P38[0].mainsnak.datavalue.value.time"
                 }
             ]
         },
@@ -215,7 +215,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.entities.*.claims.P20.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P20[0].mainsnak.datavalue.value.id"
                 },
                 {
                     "sourceName": "GND",
@@ -223,7 +223,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.placeOfDeath.[0].label"
+                    "pathInSource": "$.placeOfDeath[0].label"
                 },
                 {
                     "sourceName": "LCNAF",
@@ -231,7 +231,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'].[0]['@value']"
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#birthPlace'][0]['@value']"
                 },
                 {
                     "sourceName": "FactGrid",
@@ -239,7 +239,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Place"
                     ],
-                    "pathInSource": "$.entities.*.claims.P168.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P168[0].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -252,7 +252,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Occupation"
                     ],
-                    "pathInSource": "$.entities.*.claims.P101.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P101[0].mainsnak.datavalue.value.id"
                 },
                 {
                     "sourceName": "GND",
@@ -260,7 +260,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Occupation"
                     ],
-                    "pathInSource": "$.professionOrOccupation.[0].label"
+                    "pathInSource": "$.professionOrOccupation[0].label"
                 },
                 {
                     "sourceName": "LCNAF",
@@ -268,7 +268,7 @@
                     "fuzzyIsA": [
                         "https://schema.org/Occupation"
                     ],
-                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#occupation'].[0]['@value']"
+                    "pathInSource": "$[*]['http://www.loc.gov/mads/rdf/v1#occupation'][0]['@value']"
                 }
             ]
         },
@@ -294,7 +294,7 @@
                     "fuzzyIsA": [
                         "..."
                     ],
-                    "pathInSource": "$.entities.*.claims.P101.[*].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P101[*].mainsnak.datavalue.value.id"
                 },
                 {
                     "sourceName": "FactGrid",
@@ -302,7 +302,7 @@
                     "fuzzyIsA": [
                         "..."
                     ],
-                    "pathInSource": "$.entities.*.claims.P452.[*].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P452[*].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -315,7 +315,7 @@
                     "fuzzyIsA": [
                         "..."
                     ],
-                    "pathInSource": "$.entities.*.claims.P135.[*].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P135[*].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -328,7 +328,7 @@
                     "fuzzyIsA": [
                         ""
                     ],
-                    "pathInSource": "$.entities.*.claims.P3123.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P3123[0].mainsnak.datavalue.value"
                 }
             ]
         },

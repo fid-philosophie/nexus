@@ -21,7 +21,7 @@
                     "property": "P625",
                     "fuzzyIsA": [
                     ],
-                    "pathInSource": "$.entities.*.claims.P625.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P625[0].mainsnak.datavalue.value"
                 }
             ]
         },

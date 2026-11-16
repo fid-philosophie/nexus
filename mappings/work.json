@@ -8,13 +8,13 @@
                     "sourceName": "Wikidata",
                     "property": "P50",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P50.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P50[0].mainsnak.datavalue.value.id"
                 },
                 {
                     "sourceName": "GND",
                     "property": "firstAuthor",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.firstAuthor.[0].label"
+                    "pathInSource": "$.firstAuthor[0].label"
                 },
                 {
                     "sourceName": "VIAF",
@@ -31,7 +31,7 @@
                     "sourceName": "Wikidata",
                     "property": "P953",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P953.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P953[0].mainsnak.datavalue.value"
                 }
             ]
         }

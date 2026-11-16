@@ -12,7 +12,7 @@
                         "https://schema.org/birthDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P569.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P569[0].mainsnak.datavalue.value.time"
                 }
             ]
         },
@@ -27,7 +27,7 @@
                         "https://schema.org/deathDate",
                         "https://schema.org/Date"
                     ],
-                    "pathInSource": "$.entities.*.claims.P570.[0].mainsnak.datavalue.value.time"
+                    "pathInSource": "$.entities.*.claims.P570[0].mainsnak.datavalue.value.time"
                 }
             ]
         },
@@ -49,7 +49,7 @@
                     "sourceName": "Wikidata",
                     "property": "P101",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P101.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P101[0].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -60,7 +60,7 @@
                     "sourceName": "Wikidata",
                     "property": "P135",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P135.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P135[0].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -71,7 +71,7 @@
                     "sourceName": "Wikidata",
                     "property": "P800",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P800.[0].mainsnak.datavalue.value.id"
+                    "pathInSource": "$.entities.*.claims.P800[0].mainsnak.datavalue.value.id"
                 }
             ]
         },
@@ -104,7 +104,7 @@
                     "sourceName": "Wikidata",
                     "property": "P227",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P227[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -126,7 +126,7 @@
                     "sourceName": "Wikidata",
                     "property": "P18",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P18.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P18[0].mainsnak.datavalue.value"
                 }
             ]
         },

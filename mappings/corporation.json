@@ -21,7 +21,7 @@
                     "property": "P1448",
                     "fuzzyIsA": [
                     ],
-                    "pathInSource": "$.entities.*.claims.P1448.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P1448[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -33,7 +33,7 @@
                     "property": "P1813",
                     "fuzzyIsA": [
                     ],
-                    "pathInSource": "$.entities.*.claims.P1813.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P1813[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -55,7 +55,7 @@
                     "sourceName": "Wikidata",
                     "property": "P227",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P227[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -66,7 +66,7 @@
                     "sourceName": "Wikidata",
                     "property": "P496",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P496.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P496[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -77,7 +77,7 @@
                     "sourceName": "Wikidata",
                     "property": "P6782",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P6782.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P6782[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -88,7 +88,7 @@
                     "sourceName": "Wikidata",
                     "property": "P1278",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P1278.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P1278[0].mainsnak.datavalue.value"
                 }
             ]
         }

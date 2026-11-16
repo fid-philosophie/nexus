@@ -19,7 +19,7 @@
                     "sourceName": "Wikidata",
                     "property": "P227",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P227[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -30,7 +30,7 @@
                     "sourceName": "Wikidata",
                     "property": "P214",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P214.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P214[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -41,7 +41,7 @@
                     "sourceName": "Wikidata",
                     "property": "P244",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P244.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P244[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -52,7 +52,7 @@
                     "sourceName": "Wikidata",
                     "property": "P8168",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P8168.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P8168[0].mainsnak.datavalue.value"
                 }
             ]
         },
@@ -63,7 +63,7 @@
                     "sourceName": "Wikidata",
                     "property": "P3123",
                     "fuzzyIsA": [],
-                    "pathInSource": "$.entities.*.claims.P3123.[0].mainsnak.datavalue.value"
+                    "pathInSource": "$.entities.*.claims.P3123[0].mainsnak.datavalue.value"
                 }
             ]
         }
