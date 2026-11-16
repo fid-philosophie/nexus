@@ -537,8 +537,8 @@ def main():
     p.add_argument("nexus_mappings_json", type=str, help="a mapping that conforms to the schema defined in nexus_mappings_schema.json, use 'default'", default="default")
     p.add_argument("mapping_profile", type=str, help="one of the profiles provided in your nexus_mappings_json, 'default' mapping contains profiles 'person' and 'work'")
     p.add_argument("dict_identifiers", type=parse_identifiers_json, help=('JSON object containing resource identifiers, e.g. {"Wikidata":"Q9312","GND":"118559796"}'))
-    p.add_argument("add_identifiers", type=bool, help="", default=True)
-    p.add_argument("flatten", type=bool, help="", default=True)
+    p.add_argument("--add-identifiers", action=argparse.BooleanOptionalAction, help="adds identifiers via Wikidata", default=False)
+    p.add_argument("--flatten", action=argparse.BooleanOptionalAction, help="flattens the output, use --no-flatten to get full details on provenance etc.", default=True)
     args = p.parse_args()
 
     if not args.nexus_mappings_json:
