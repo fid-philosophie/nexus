@@ -138,7 +138,7 @@ class In(BaseModel):
     )
 
     add_identifiers: bool = Field(
-        default=True,
+        default=False,
         description=(
             "If set true and a Wikidata identifier is given, "
             "Nexus will try to fetch identifiers from other resources."
