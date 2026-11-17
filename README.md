@@ -3,506 +3,112 @@
 Python-based Linked Open Data aggregation service wrapped with **FastAPI**.
 The service queries multiple authority sources (e.g. Wikidata, GND, VIAF, LCNAF), aggregates prioritized results, and returns structured **factlets** or flattened output.
 
-Caching of HTTP responses is handled via **Redis**.
+Caching of incoming responses is handled via **Redis**.
 
 ---
 
-# Quick start (Docker recommended)
+## How to get started
 
-## 1) Clone repository
+### 1) Clone repository
 
 ```bash
-git clone <your-repository-url>
-cd nexus_api
+git clone git@github.com:fid-philosophie/nexus.git
+cd nexus
 ```
 
-## 2) Create `.env`
+### 2) Copy/create .env from .env.example
 
-Create a file:
+#### MacOS / Linux
 
-```
-.env
-```
-
-with contents:
-
-```env
-REDIS_HOST=redis
-REDIS_PORT=6379
-APP_HOST=0.0.0.0
-APP_PORT=8000
+```bash
+cp -n .env.example .env
 ```
 
----
+#### Windows PowerShell
 
-## 3) Start services
+```bash
+if (-Not (Test-Path .env)) {
+    Copy-Item .env.example .env
+}
+```
 
-Run:
+
+### 3) Configure .env
+
+
+- `ENABLE_CUSTOM_MAPPINGS=True` will enable directly posting custom JSON into the API, so make sure to have the API running in a safe environment - if you run a fork the safer way will be to simply add new mappings in the `mappings` folder
+
+- Use Setup 1 if you already have a Redis instance running and you wnat to use taht, otherwise go with Setup 2
+
+- 
+
+### 4) Start the API
 
 ```bash
 docker compose up --build
 ```
 
-This starts:
 
-* FastAPI server
-* Redis cache service
+### 5) Test endpoint via curl
 
----
-
-## 4) Open API documentation
-
-Open in browser:
-
-```
-http://localhost:8000/
-```
-
-Alternative documentation:
-
-```
-http://localhost:8000/redoc
-```
-
----
-
-## 5) Test endpoint via curl
-
-Example:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/run_nexus_endpoint \
+curl -X POST http://127.0.0.1:8000/v1/entity \
   -H "Content-Type: application/json" \
   -d '{
-    "nexus_mappings_json": "default",
     "mapping_profile": "person",
-    "dict_identifiers": "{\"Wikidata\":\"Q9312\"}",
+    "dict_identifiers": {
+      "Wikidata": "Q9312"
+    },
     "add_identifiers": true,
     "flatten": false
   }'
 ```
+- this will give you data aggregated via the `mappings/person.json` profile
+- `"add_identifiers": true` adds identifiers for additional sources (e.g. GND) via Wikidata identifier properties
 
----
+### 6) Or test via the OpenAPI docs interface
 
-## 6) Stop services
+- open http://127.0.0.1:8000 via your browser
+
+
+### 7) Stop the API
 
 ```bash
 docker compose down
 ```
 
----
 
-# Local development setup (without Docker)
-
-## Requirements
-
-* Python ≥ 3.11
-* Redis running locally
-
-Example Redis start via Docker:
-
-```bash
-docker run --name nexus-redis -p 6379:6379 redis:7-alpine
-```
-
----
-
-## 1) Clone repository
-
-```bash
-git clone <your-repository-url>
-cd nexus_api
-```
-
----
-
-## 2) Create virtual environment
-
-### Windows
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-### macOS / Linux
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
----
-
-## 3) Install dependencies
-
-```bash
-pip install --upgrade pip
-pip install .
-```
-
-Dependencies are defined in:
-
-```
-pyproject.toml
-```
-
----
-
-## 4) Configure environment variables
-
-Create `.env`:
-
-```env
-REDIS_HOST=localhost
-REDIS_PORT=6379
-APP_PORT=8000
-```
-
----
-
-## 5) Start API server
-
-```bash
-python -m uvicorn nexus_api:app --reload --port 8000
-```
-
----
-
-## 6) API should now be running
-
-Open:
-
-```
-http://127.0.0.1:8000/
-```
-
-or
-
-```
-http://127.0.0.1:8000/redoc
-```
-
----
-
-# Example API request
-
-Example using **curl**:
-
-```bash
-curl -X POST http://127.0.0.1:8000/run_nexus_endpoint \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nexus_mappings_json": "default",
-    "mapping_profile": "person",
-    "dict_identifiers": "{\"Wikidata\": \"Q9312\", \"GND\": \"118559796\", \"LCNAF\": \"n79021614\", \"VIAF\": \"82088490\"}",
-    "add_identifiers": true,
-    "flatten": false
-  }'
-```
-
----
-
-# Example request bodies
+## Input: example request bodies
 
 ### With identifiers from multiple sources
 
 ```json
 {
-  "nexus_mappings_json": "default",
   "mapping_profile": "person",
-  "dict_identifiers": "{'Wikidata': 'Q9312', 'GND': '118559796', 'LCNAF': 'n79021614', 'VIAF': '82088490'}",
-  "add_identifiers": true,
+  "dict_identifiers": {"Wikidata": "Q9312", "GND": "118559796", "LCNAF": "n79021614", "VIAF": "82088490"},
+  "add_identifiers": false,
   "flatten": false
 }
 ```
 
 ---
 
-### With only Wikidata identifier
+### With only a Wikidata identifier
 
 ```json
 {
-  "nexus_mappings_json": "default",
   "mapping_profile": "person",
-  "dict_identifiers": "{'Wikidata': 'Q9312'}",
+  "dict_identifiers": {"Wikidata": "Q9312"},
   "add_identifiers": true,
   "flatten": false
 }
 ```
 
-If:
 
-```
-add_identifiers == true
-```
+## Output
 
-additional identifiers are automatically fetched from:
-
-* GND
-* VIAF
-* LCNAF
-
-via Wikidata.
-
----
-
-# Output variants
-
-## Factlets (`flatten=false`)
-
-Returns structured provenance-rich objects.
-
-Example input:
-
-```json
-{
-  "nexus_mappings_json": "default",
-  "mapping_profile": "person",
-  "dict_identifiers": "{'Wikidata':'Q9312'}",
-  "add_identifiers": true,
-  "flatten": false
-}
-```
-
-Returns:
-
-<details>
-<summary>expand response</summary>
-
-```
-{
-  "result": [
-    {
-      "name": "wikidata_id",
-      "description": "...",
-      "value": [
-        "Q9312"
-      ],
-      "timestamp": 1757935746.5351136,
-      "fuzzy_isA": [],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
-      "source_name": "Wikidata",
-      "source_property": "title",
-      "source_date": "",
-      "source_path": "$.entities.*.title"
-    },
-    {
-      "name": "gnd_id",
-      "description": "...",
-      "value": [
-        "118559796"
-      ],
-      "timestamp": 1757935746.551301,
-      "fuzzy_isA": [],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
-      "source_name": "Wikidata",
-      "source_property": "P227",
-      "source_date": "",
-      "source_path": "$.entities.*.claims.P227.[0].mainsnak.datavalue.value"
-    },
-    {
-      "name": "preferred_name",
-      "description": "...",
-      "value": [
-        "Kant, Immanuel"
-      ],
-      "timestamp": 1757935746.5654197,
-      "fuzzy_isA": [],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "preferredName",
-      "source_date": "",
-      "source_path": "$.preferredName"
-    },
-    {
-      "name": "birth_date",
-      "description": "...",
-      "value": [
-        "1724-04-22"
-      ],
-      "timestamp": 1757935746.5778215,
-      "fuzzy_isA": [
-        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
-        "https://schema.org/birthDate",
-        "https://schema.org/Date"
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "dateOfBirth",
-      "source_date": "",
-      "source_path": "$.dateOfBirth.[0]"
-    },
-    {
-      "name": "birth_place",
-      "description": "...",
-      "value": [
-        "Königsberg"
-      ],
-      "timestamp": 1757935746.5901995,
-      "fuzzy_isA": [
-        "https://schema.org/Place"
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "placeOfBirth",
-      "source_date": "",
-      "source_path": "$.placeOfBirth.[0].label"
-    },
-    {
-      "name": "death_date",
-      "description": "...",
-      "value": [
-        "1804-02-12"
-      ],
-      "timestamp": 1757935746.6037624,
-      "fuzzy_isA": [
-        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
-        "https://schema.org/deathDate",
-        "https://schema.org/Date"
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "dateOfDeath",
-      "source_date": "",
-      "source_path": "$.dateOfDeath.[0]"
-    },
-    {
-      "name": "death_place",
-      "description": "...",
-      "value": [
-        "Königsberg"
-      ],
-      "timestamp": 1757935746.6215339,
-      "fuzzy_isA": [
-        "https://schema.org/Place"
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "placeOfDeath",
-      "source_date": "",
-      "source_path": "$.placeOfDeath.[0].label"
-    },
-    {
-      "name": "occupation",
-      "description": "...",
-      "value": [
-        "Philosoph"
-      ],
-      "timestamp": 1757935746.638694,
-      "fuzzy_isA": [
-        "https://schema.org/Occupation"
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://lobid.org/gnd/118559796.json",
-      "source_name": "GND",
-      "source_property": "professionOrOccupation",
-      "source_date": "",
-      "source_path": "$.professionOrOccupation.[0].label"
-    },
-    {
-      "name": "field_of_work",
-      "description": "...",
-      "value": [
-        "Q9471",
-        "Q35277",
-        "Q9465"
-      ],
-      "timestamp": 1757935746.666455,
-      "fuzzy_isA": [
-        "..."
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
-      "source_name": "Wikidata",
-      "source_property": "P101",
-      "source_date": "",
-      "source_path": "$.entities.*.claims.P101.[*].mainsnak.datavalue.value.id"
-    },
-    {
-      "name": "movement",
-      "description": "...",
-      "value": [
-        "Q679842",
-        "Q12539"
-      ],
-      "timestamp": 1757935746.6809,
-      "fuzzy_isA": [
-        "..."
-      ],
-      "subject": {
-        "Wikidata": "Q9312",
-        "GND": "118559796",
-        "VIAF": "82088490",
-        "LCNAF": "n79021614"
-      },
-      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
-      "source_name": "Wikidata",
-      "source_property": "P135",
-      "source_date": "",
-      "source_path": "$.entities.*.claims.P135.[*].mainsnak.datavalue.value.id"
-    }
-  ]
-}
-```
-
-</details>
-
----
-
-## Flattened output (`flatten=true`)
+### Flattened output (`flatten=true`)
 
 Returns simplified key-value aggregation.
 
@@ -537,68 +143,356 @@ Example output:
 }
 ```
 
----
+### Factlets output (`flatten=false`)
 
-# Environment variables
+Returns structured provenance-rich objects.
 
-| Variable   | Purpose        |
-| ---------- | -------------- |
-| REDIS_HOST | Redis hostname |
-| REDIS_PORT | Redis port     |
-| APP_PORT   | API port       |
+Example input:
 
-Docker default:
-
-```
-REDIS_HOST=redis
-```
-
-Local default:
-
-```
-REDIS_HOST=localhost
+```json
+{
+  "nexus_mappings_json": "default",
+  "mapping_profile": "person",
+  "dict_identifiers": "{'Wikidata':'Q9312'}",
+  "add_identifiers": true,
+  "flatten": false
+}
 ```
 
----
+Returns:
 
-# Notes
-
-## Redis requirement
-
-Redis is required because the application caches HTTP requests.
-
-Startup fails intentionally if Redis is unavailable:
+<details>
+<summary>expand response</summary>
 
 ```
-Redis ping: True
+{
+  "result": [
+    {
+      "name": "wikidata_id",
+      "description": "...",
+      "value": [
+        "Q9312"
+      ],
+      "timestamp": "2026-11-17T11:26:35.247+00:00",
+      "fuzzy_isA": [],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
+      "source_name": "Wikidata",
+      "source_property": "title",
+      "source_date": "",
+      "source_path": "$.entities.*.title"
+    },
+    {
+      "name": "gnd_id",
+      "description": "...",
+      "value": [
+        "118559796"
+      ],
+      "timestamp": "2026-11-17T11:26:35.247+00:00",
+      "fuzzy_isA": [],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
+      "source_name": "Wikidata",
+      "source_property": "P227",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P227[0].mainsnak.datavalue.value"
+    },
+    {
+      "name": "preferred_name",
+      "description": "...",
+      "value": [
+        "Immanuel Kant"
+      ],
+      "timestamp": "2026-11-17T11:26:35.249+00:00",
+      "fuzzy_isA": [],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "labels.en",
+      "source_date": "",
+      "source_path": "$.entities.*.labels.en.value"
+    },
+    {
+      "name": "birth_date",
+      "description": "...",
+      "value": [
+        "+1724-04-22T00:00:00Z"
+      ],
+      "timestamp": "2026-11-17T11:26:35.251+00:00",
+      "fuzzy_isA": [
+        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+        "https://schema.org/birthDate",
+        "https://schema.org/Date"
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "P77",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P77[0].mainsnak.datavalue.value.time"
+    },
+    {
+      "name": "birth_place",
+      "description": "...",
+      "value": [
+        "Q22071"
+      ],
+      "timestamp": "2026-11-17T11:26:35.252+00:00",
+      "fuzzy_isA": [
+        "https://schema.org/Place"
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "P82",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P82[0].mainsnak.datavalue.value.id"
+    },
+    {
+      "name": "death_date",
+      "description": "...",
+      "value": [
+        "+1804-02-12T00:00:00Z"
+      ],
+      "timestamp": "2026-11-17T11:26:35.252+00:00",
+      "fuzzy_isA": [
+        "https://www.cidoc-crm.org/cidoc-crm/E52_Time-Span",
+        "https://schema.org/deathDate",
+        "https://schema.org/Date"
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "P38",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P38[0].mainsnak.datavalue.value.time"
+    },
+    {
+      "name": "death_place",
+      "description": "...",
+      "value": [
+        "Q22071"
+      ],
+      "timestamp": "2026-11-17T11:26:35.253+00:00",
+      "fuzzy_isA": [
+        "https://schema.org/Place"
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "P168",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P168[0].mainsnak.datavalue.value.id"
+    },
+    {
+      "name": "occupation",
+      "description": "...",
+      "value": [
+        "Philosoph"
+      ],
+      "timestamp": "2026-11-17T11:26:35.254+00:00",
+      "fuzzy_isA": [
+        "https://schema.org/Occupation"
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://lobid.org/gnd/118559796.json",
+      "source_name": "GND",
+      "source_property": "professionOrOccupation",
+      "source_date": "",
+      "source_path": "$.professionOrOccupation[0].label"
+    },
+    {
+      "name": "influenced_by",
+      "description": "...",
+      "value": [
+        "Q37160",
+        "Q82049",
+        "Q76510",
+        "Q6527",
+        "Q316367",
+        "Q935",
+        "Q859",
+        "Q63081",
+        "Q41568",
+        "Q9191",
+        "Q9047",
+        "Q9353",
+        "Q309818",
+        "Q35802"
+      ],
+      "timestamp": "2026-11-17T11:26:35.255+00:00",
+      "fuzzy_isA": [
+        "..."
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
+      "source_name": "Wikidata",
+      "source_property": "P737",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P737.*.mainsnak.datavalue.value.id"
+    },
+    {
+      "name": "field_of_work",
+      "description": "...",
+      "value": [
+        "Q468127",
+        "Q1878871",
+        "Q1878870"
+      ],
+      "timestamp": "2026-11-17T11:26:35.255+00:00",
+      "fuzzy_isA": [
+        "..."
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://database.factgrid.de/wiki/Special:EntityData/Q14211.json",
+      "source_name": "FactGrid",
+      "source_property": "P452",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P452[*].mainsnak.datavalue.value.id"
+    },
+    {
+      "name": "movement",
+      "description": "...",
+      "value": [
+        "Q679842",
+        "Q12539"
+      ],
+      "timestamp": "2026-11-17T11:26:35.256+00:00",
+      "fuzzy_isA": [
+        "..."
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
+      "source_name": "Wikidata",
+      "source_property": "P135",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P135[*].mainsnak.datavalue.value.id"
+    },
+    {
+      "name": "SEP_ID",
+      "description": "...",
+      "value": [
+        "kant"
+      ],
+      "timestamp": "2026-11-17T11:26:35.260+00:00",
+      "fuzzy_isA": [
+        ""
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://www.wikidata.org/wiki/Special:EntityData/Q9312.json",
+      "source_name": "Wikidata",
+      "source_property": "P3123",
+      "source_date": "",
+      "source_path": "$.entities.*.claims.P3123[0].mainsnak.datavalue.value"
+    },
+    {
+      "name": "SEP_Preamble",
+      "description": "...",
+      "value": "Immanuel Kant (1724–1804) is the central figure in modern philosophy. He synthesized early modern rationalism and empiricism, set the terms for much of nineteenth and twentieth century philosophy, and continues to exercise a significant influence today in metaphysics, epistemology, ethics, political philosophy, aesthetics, and other fields. The fundamental idea of Kant’s “critical philosophy” – especially in his three Critiques: the Critique of Pure Reason (1781, 1787), the Critique of Practical Reason (1788), and the Critique of the Power of Judgment (1790) – is human autonomy. He argues that the human understanding is the source of the general laws of nature that structure all our experience; and that human reason gives itself the moral law, which is our basis for belief in God, freedom, and immortality. Therefore, scientific knowledge, morality, and religious belief are mutually consistent and secure because they all rest on the same foundation of human autonomy, which is also the final end of nature according to the teleological worldview of reflecting judgment that Kant introduces to unify the theoretical and practical parts of his philosophical system.",
+      "timestamp": "2026-11-17T11:26:35.262+00:00",
+      "fuzzy_isA": [
+        ""
+      ],
+      "subject": {
+        "Wikidata": "Q9312",
+        "GND": "118559796",
+        "VIAF": "82088490",
+        "LCNAF": "n79021614",
+        "FactGrid": "Q14211",
+        "SEP": "kant"
+      },
+      "source_uri": "https://plato.stanford.edu/entries/kant",
+      "source_name": "SEP",
+      "source_property": "preamble",
+      "source_date": "",
+      "source_path": "normalize-space(string(//*[@id='preamble']))"
+    }
+  ]
+}
 ```
 
-must succeed.
-
----
-
-## Reverse proxy setups
-
-If running behind a proxy mounted at `/nexus`, keep:
-
-```python
-root_path="/nexus"
-```
-
-Otherwise remove it for local development simplicity.
-
----
-
-# Development workflow summary
-
-Run locally:
-
-```
-uvicorn nexus_api:app --reload
-```
-
-Run containerized:
-
-```
-docker compose up --build
-```
+</details>
