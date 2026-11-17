@@ -129,16 +129,59 @@ Example output:
 ```json
 {
   "result": {
-    "wikidata_id": ["Q9312"],
-    "gnd_id": ["118559796"],
-    "preferred_name": ["Kant, Immanuel"],
-    "birth_date": ["1724-04-22"],
-    "birth_place": ["Königsberg"],
-    "death_date": ["1804-02-12"],
-    "death_place": ["Königsberg"],
-    "occupation": ["Philosoph"],
-    "field_of_work": ["Q9471", "Q35277", "Q9465"],
-    "movement": ["Q679842", "Q12539"]
+    "wikidata_id": [
+      "Q9312"
+    ],
+    "gnd_id": [
+      "118559796"
+    ],
+    "preferred_name": [
+      "Immanuel Kant"
+    ],
+    "birth_date": [
+      "+1724-04-22T00:00:00Z"
+    ],
+    "birth_place": [
+      "Q22071"
+    ],
+    "death_date": [
+      "+1804-02-12T00:00:00Z"
+    ],
+    "death_place": [
+      "Q22071"
+    ],
+    "occupation": [
+      "Philosoph"
+    ],
+    "influenced_by": [
+      "Q37160",
+      "Q82049",
+      "Q76510",
+      "Q6527",
+      "Q316367",
+      "Q935",
+      "Q859",
+      "Q63081",
+      "Q41568",
+      "Q9191",
+      "Q9047",
+      "Q9353",
+      "Q309818",
+      "Q35802"
+    ],
+    "field_of_work": [
+      "Q468127",
+      "Q1878871",
+      "Q1878870"
+    ],
+    "movement": [
+      "Q679842",
+      "Q12539"
+    ],
+    "SEP_ID": [
+      "kant"
+    ],
+    "SEP_Preamble": "Immanuel Kant (1724–1804) is the central figure in modern philosophy. He synthesized early modern rationalism and empiricism, set the terms for much of nineteenth and twentieth century philosophy, and continues to exercise a significant influence today in metaphysics, epistemology, ethics, political philosophy, aesthetics, and other fields. The fundamental idea of Kant’s “critical philosophy” – especially in his three Critiques: the Critique of Pure Reason (1781, 1787), the Critique of Practical Reason (1788), and the Critique of the Power of Judgment (1790) – is human autonomy. He argues that the human understanding is the source of the general laws of nature that structure all our experience; and that human reason gives itself the moral law, which is our basis for belief in God, freedom, and immortality. Therefore, scientific knowledge, morality, and religious belief are mutually consistent and secure because they all rest on the same foundation of human autonomy, which is also the final end of nature according to the teleological worldview of reflecting judgment that Kant introduces to unify the theoretical and practical parts of his philosophical system."
   }
 }
 ```
@@ -164,7 +207,7 @@ Returns:
 <details>
 <summary>expand response</summary>
 
-```
+```json
 {
   "result": [
     {
